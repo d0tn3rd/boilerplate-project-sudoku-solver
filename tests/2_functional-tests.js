@@ -28,7 +28,7 @@ suite("Functional Tests", () => {
         })
         .end((err, res) => {
           assert.typeOf(req.body, "object");
-          assert.equals(
+          assert.equal(
             req.body.solution,
             "135762984946381257728459613694517832812936745357824196473298561581673429269145378",
           );
