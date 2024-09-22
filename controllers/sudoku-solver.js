@@ -20,6 +20,8 @@ class SudokuSolver {
     return { error: false }; // no error means success
   }
 
+  check(puzzle, coordinate, value) {}
+
   _validateCoordinates(row, col) {
     // validate row / col values
     if (ROW_HEADING.indexOf(row) === -1) return { error: "Invalid coordinate" };
@@ -263,9 +265,11 @@ class SudokuSolver {
     if (Object.keys(this.optionMap).length === 0) {
       // solved
       console.log("solution");
-      console.log(this.puzzleStrArr.join(""));
+      const soln = this.puzzleStrArr.join("");
+      return { error: false, solution: soln };
     } else {
-      // cannot be solved
+      // all moves applied but still optionMap remains
+      return { error: "Puzzle cannot be solved" };
     }
   }
 }
