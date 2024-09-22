@@ -18,7 +18,51 @@ class SudokuSolver {
     return { error: false }; // no error means success
   }
 
-  check(puzzle, coordinate, value) {}
+  check(puzzle, coordinate, value) {
+    // called after validating coordinates
+    const row = coordinate[0];
+    const col = coordinate[1];
+
+    const rowIndex = ROW_HEADING.indexOf(row);
+
+    const puzzleStrIndex = 9 * rowIndex + col - 1;
+
+    if (puzzle[puzzleStrIndex] !== ".") {
+      return {
+        error: false,
+        result: {
+          valid: puzzle[puzzleStrIndex] === String(value),
+        },
+      };
+    }
+
+    const { error: rowError } = this.checkRowPlacement(puzzle, row, col, value);
+
+    const { error: colError } = this.checkColumnPlacement(
+      puzzle,
+      row,
+      col,
+      value,
+    );
+    const { error: regionError } = this.checkRegionPlacement(
+      puzzle,
+      row,
+      col,
+      value,
+    );
+
+    if (!regionError && !rowError && !colError) {
+      return { error: false, result: { valid: true } };
+    }
+
+    const resErrorArr = [];
+    if (regionError) resErrorArr.push("region");
+    if (colError) resErrorArr.push("column");
+    if (rowError) resErrorArr.push("row");
+
+    const result = { valid: false, conflict: resErrorArr };
+    return { error: true, result };
+  }
 
   _validateCoordinates(row, col) {
     // validate row / col values

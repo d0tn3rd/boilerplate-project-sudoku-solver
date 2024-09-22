@@ -33,7 +33,7 @@ module.exports = function (app) {
     );
     if (result.error) return res.status(400).send({ error: result.error });
 
-    return res.status(200).send({ result: result.result });
+    return res.status(200).send(result.result);
   });
 
   app.route("/api/solve").post((req, res) => {
