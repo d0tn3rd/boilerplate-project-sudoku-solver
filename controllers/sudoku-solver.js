@@ -37,48 +37,6 @@ class SudokuSolver {
     return { error: false };
   }
 
-  _calculateRowIndices(row) {
-    // this function returns the current row's indices on the puzzlestring
-    // convert to indices for calculation
-    const rowIndex = ROW_HEADING.indexOf(row);
-
-    const start = Math.floor(rowIndex / 9); // throw away the remainder
-    const rowIndices = [];
-    for (let i = 0; i < 9; i++) {
-      rowIndices.push(start + i);
-    }
-
-    return rowIndices;
-  }
-
-  _calculateColumnIndices(index) {
-    // return current columns indinces on the puzzlestring
-    const colIndex = index % 9;
-    const colIndices = [];
-    for (let i = 0; i < 9; i++) {
-      colIndices.push(9 * i + colIndex);
-    }
-    return colIndices;
-  }
-
-  _calculateRegionIndices(index) {
-    // calculate region's indices no the puzzleString
-    const rowIndex = Math.floor(index / 9);
-    const colIndex = index % 9;
-    const rowStart = Math.floor(rowIndex / 3);
-    const regionMultiplier = Math.floor(colIndex / 3);
-    const regionOffset = regionMultiplier * 3;
-    const regionIndices = [];
-    for (let i = 0; i < 3; i++) {
-      // column wise
-      for (let j = 0; j < 3; j++) {
-        regionIndices.push(9 * (rowStart + j) + regionOffset + i);
-      }
-    }
-
-    return regionIndices;
-  }
-
   _calculatePuzzleStringIndex(row, col) {
     // return the puzzlestring index for the coordinate
     const rowIndex = ROW_HEADING.indexOf(row);
