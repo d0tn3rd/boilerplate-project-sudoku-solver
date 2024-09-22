@@ -1,11 +1,9 @@
 const ROW_HEADING = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
-const globalOptsSet = new Set(
-  [1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => String(s)),
-);
-
-const debug = process.env.DEBUG || true;
-console.debug = () => {};
+const debug = process.env.DEBUG || false;
+if (!debug) {
+  console.debug = () => {};
+}
 
 class SudokuSolver {
   validate(puzzleString) {
@@ -92,7 +90,6 @@ class SudokuSolver {
   }
 
   _findRegionIndex(puzzleStrIndex) {
-    const rowIndex = Math.floor(puzzleStrIndex / 9);
     const colIndex = puzzleStrIndex % 9;
 
     const regionOptions = [
@@ -154,7 +151,7 @@ class SudokuSolver {
   _formatPuzzle(puzzleString) {
     let startIndex = 0;
     while (startIndex !== 81) {
-      console.log(
+      console.debug(
         puzzleString
           .slice(startIndex, startIndex + 9)
           .split("")
@@ -217,13 +214,13 @@ class SudokuSolver {
 
     // remove the key from the map
 
-    console.log("deleting key", puzzleStrIndex);
+    console.debug("deleting key", puzzleStrIndex);
     delete this.optionMap[puzzleStrIndex];
     this.puzzleStrArr[puzzleStrIndex] = val;
     this.rows = this._calculateRows();
     this.cols = this._calculateColumns();
     this.regions = this._calculateRegions();
-    console.log("new option map", this.optionMap);
+    console.debug("new option map", this.optionMap);
   }
 
   solve(puzzleString) {
@@ -233,7 +230,7 @@ class SudokuSolver {
 
     // setup
 
-    console.log("setting up the class");
+    console.debug("setting up the class");
     this.puzzleStrArr = puzzleString.split("");
     const dotIndices = [...this.puzzleStrArr].reduce((aggr, curr, index) => {
       if (curr === ".") aggr.push(index);
@@ -251,20 +248,20 @@ class SudokuSolver {
     this.cols = this._calculateColumns(puzzleStrArr);
     this.regions = this._calculateRegions(puzzleStrArr);
 
-    console.log("Setup complete");
-    console.log("stored option map: ", this.optionMap);
+    console.debug("Setup complete");
+    console.debug("stored option map: ", this.optionMap);
 
     // find the first move
     let move = this.findMoves();
     while (move) {
-      console.log("applying move: ", move);
+      console.debug("applying move: ", move);
       this.fillSpot(move);
       move = this.findMoves();
     }
 
     if (Object.keys(this.optionMap).length === 0) {
       // solved
-      console.log("solution");
+      console.debug("solution");
       const soln = this.puzzleStrArr.join("");
       return { error: false, solution: soln };
     } else {
