@@ -7,13 +7,16 @@ if (!debug) {
 
 class SudokuSolver {
   validate(puzzleString) {
-    const puzzleRegex = /[1-9\.]+/;
-    const matches = puzzleString.match(puzzleRegex);
+    const puzzleRegex = /[^1-9\.]/gm;
+
+    const puzzleStrCopy = puzzleString;
+    const matches = puzzleStrCopy.match(puzzleRegex);
 
     if (puzzleString.length !== 81)
       return { error: "Expected puzzle to be 81 characters long" };
 
-    if (!matches) return { error: "Invalid characters in puzzle" };
+    if (matches && matches.length !== 1)
+      return { error: "Invalid characters in puzzle" };
 
     return { error: false }; // no error means success
   }
