@@ -37,73 +37,73 @@ suite("Unit Tests", () => {
   });
 
   test("Logic handles a valid row placement", (done) => {
-    assert.isFalse(
+    assert.isTrue(
       solver.checkRowPlacement(
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
         "A",
         2,
         3,
-      )["error"],
+      ),
     );
     done();
   });
 
   test("Logic handles an invalid row placement", (done) => {
-    assert.isTrue(
+    assert.isFalse(
       solver.checkRowPlacement(
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
         "A",
         2,
         8,
-      )["error"],
+      ),
     );
     done();
   });
 
   test("Logic handles a valid column placement", (done) => {
-    assert.isFalse(
+    assert.isTrue(
       solver.checkColumnPlacement(
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
         "A",
         2,
         3,
-      )["error"],
+      ),
     );
     done();
   });
 
   test("Logic handles an invalid column placement", (done) => {
-    assert.isTrue(
+    assert.isFalse(
       solver.checkColumnPlacement(
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
         "A",
         2,
         9,
-      )["error"],
+      ),
     );
     done();
   });
 
   test("Logic handles a valid region (3x3 grid) placement", (done) => {
-    assert.isFalse(
-      solver.checkRegionPlacement(
-        "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
-        "A",
-        2,
-        3,
-      )["error"],
-    );
-    done();
-  });
-
-  test("Logic handles an invalid region (3x3 grid) placement", (done) => {
     assert.isTrue(
       solver.checkRegionPlacement(
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
         "A",
         2,
+        3,
+      ),
+    );
+    done();
+  });
+
+  test("Logic handles an invalid region (3x3 grid) placement", (done) => {
+    assert.isFalse(
+      solver.checkRegionPlacement(
+        "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
+        "A",
+        2,
         1,
-      )["error"],
+      ),
     );
     done();
   });

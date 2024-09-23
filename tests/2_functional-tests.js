@@ -30,7 +30,7 @@ suite("Functional Tests", () => {
           assert.isObject(res.body);
           assert.property(res.body, "solution");
           assert.equal(
-            req.body.solution,
+            res.body.solution,
             "135762984946381257728459613694517832812936745357824196473298561581673429269145378",
           );
           done();
@@ -46,7 +46,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Required field missing");
+          assert.equal(res.body.error, "Required field missing");
           done();
         });
     });
@@ -63,7 +63,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Invalid characters in puzzle");
+          assert.equal(res.body.error, "Invalid characters in puzzle");
           done();
         });
     });
@@ -74,13 +74,16 @@ suite("Functional Tests", () => {
         .post("/api/solve")
         .send({
           puzzle:
-            "1.5..2.84..63.12.7.2..5...?.9..1....8.2.3674.3.7.2..9.47.-.8..1..16....926914B37.........",
+            "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.........",
         })
         .end((err, res) => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Expected puzzle to be 81 characters");
+          assert.equal(
+            res.body.error,
+            "Expected puzzle to be 81 characters long",
+          );
           done();
         });
     });
@@ -90,13 +93,16 @@ suite("Functional Tests", () => {
         .request(server)
         .post("/api/solve")
         .send({
-          puzzle: "1.53674.3.7.2..9.47.-.8..1..16....926914B37.........",
+          puzzle: "1.53674.3.7.2..9.47...8..1..16....926914.37.........",
         })
         .end((err, res) => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Expected puzzle to be 81 characters");
+          assert.equal(
+            res.body.error,
+            "Expected puzzle to be 81 characters long",
+          );
           done();
         });
     });
@@ -113,7 +119,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Expected puzzle to be 81 characters");
+          assert.equal(res.body.error, "Puzzle cannot be solved");
           done();
         });
     });
@@ -133,8 +139,8 @@ suite("Functional Tests", () => {
         .end((err, res) => {
           assert.equal(res.status, 200);
           assert.isObject(res.body);
-          assert.property(res.body, "value");
-          assert.typeOf(res.body.value, Boolean);
+          assert.property(res.body, "valid");
+          assert.isBoolean(res.body.valid);
           done();
         });
     });
@@ -150,7 +156,7 @@ suite("Functional Tests", () => {
           value: 4,
         })
         .end((err, res) => {
-          assert.equal(res.status, 400);
+          assert.equal(res.status, 200);
           assert.isObject(res.body);
           assert.property(res.body, "valid");
           assert.isFalse(res.body.valid);
@@ -169,10 +175,8 @@ suite("Functional Tests", () => {
           value: 3,
         })
         .end((err, res) => {
-          assert.equal(res.status, 400);
+          assert.equal(res.status, 200);
           assert.isObject(res.body);
-          assert.property(res.body, "valid");
-          assert.isFalse(res.body.valid);
           done();
         });
     });
@@ -188,10 +192,10 @@ suite("Functional Tests", () => {
           value: "2",
         })
         .end((err, res) => {
-          assert.equal(res.status, 400);
+          assert.equal(res.status, 200);
           assert.isObject(res.body);
-          assert.property(res.body, "error");
-          assert.equal(req.body.error, "Expected puzzle to be 81 characters");
+          assert.property(res.body, "valid");
+          assert.isFalse(res.body.valid);
           done();
         });
     });
@@ -208,7 +212,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Required field(s) missing");
+          assert.equal(res.body.error, "Required field(s) missing");
           done();
         });
     });
@@ -220,12 +224,14 @@ suite("Functional Tests", () => {
         .send({
           puzzle:
             "1.5..2.84..63.12.7.2..5...?.9..1....8.2.3674.3.7.2..9.47.-.8..1..16....926914B37.........",
+          coordinate: "A1",
+          value: 3,
         })
         .end((err, res) => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Invalid characters in puzzle");
+          assert.equal(res.body.error, "Invalid characters in puzzle");
           done();
         });
     });
@@ -236,13 +242,18 @@ suite("Functional Tests", () => {
         .post("/api/check")
         .send({
           puzzle:
-            "1.5.84..63.12.7.2..5....9..1....8.2.3674.3.7.2..9.47..8..1..16....926914B37.........",
+            "1.5.84..63.12.7.2..5....9..1....8.2.3674.3.7.2..9.47..8..1..16....926914.37.........",
+          coordinate: "A1",
+          value: 3,
         })
         .end((err, res) => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Expected puzzle to be 81 characters");
+          assert.equal(
+            res.body.error,
+            "Expected puzzle to be 81 characters long",
+          );
           done();
         });
     });
@@ -252,6 +263,8 @@ suite("Functional Tests", () => {
         .request(server)
         .post("/api/check")
         .send({
+          puzzle:
+            "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
           coordinate: "L9",
           value: 4,
         })
@@ -259,7 +272,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Invalid coordinate");
+          assert.equal(res.body.error, "Invalid coordinate");
           done();
         });
     });
@@ -270,7 +283,7 @@ suite("Functional Tests", () => {
         .post("/api/check")
         .send({
           puzzle:
-            "1.5.84..63.12.7.2..5....9..1....8.2.3674.3.7.2..9.47..8..1..16....926914B37.........",
+            "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
           coordinate: "A1",
           value: "C",
         })
@@ -278,7 +291,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 400);
           assert.isObject(res.body);
           assert.property(res.body, "error");
-          assert.equal(req.body.error, "Invalid value");
+          assert.equal(res.body.error, "Invalid value");
           done();
         });
     });

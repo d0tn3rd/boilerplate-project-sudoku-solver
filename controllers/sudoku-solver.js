@@ -12,16 +12,17 @@ class SudokuSolver {
     const puzzleStrCopy = puzzleString;
     const matches = puzzleStrCopy.match(puzzleRegex);
 
+    if (matches) return { error: "Invalid characters in puzzle" };
+
     if (puzzleString.length !== 81)
       return { error: "Expected puzzle to be 81 characters long" };
-
-    if (matches && matches.length !== 1)
-      return { error: "Invalid characters in puzzle" };
 
     return { error: false }; // no error means success
   }
 
   check(puzzle, coordinate, value) {
+    const { error } = this.validate(puzzle);
+    if (error) return { error };
     // called after validating coordinates
     const row = coordinate[0];
     const col = coordinate[1];
@@ -90,10 +91,11 @@ class SudokuSolver {
     return rowIndex * 9 + col - 1;
   }
 
-  _calculateColumns() {
+  _calculateColumns(argArr) {
     // will return an array of 9 element columns as arrays
     // ideally should be called only once
-    const puzzleStrArr = [...this.puzzleStrArr];
+    // arg array is optional
+    const puzzleStrArr = argArr ? argArr : this.puzzleStrArr;
     const cols = [];
     for (let colIndex = 0; colIndex < 9; colIndex++) {
       const col = [];
@@ -106,8 +108,8 @@ class SudokuSolver {
     return cols;
   }
 
-  _calculateRows() {
-    const puzzleStrArr = [...this.puzzleStrArr];
+  _calculateRows(argArr) {
+    const puzzleStrArr = argArr ? argArr : this.puzzleStrArr;
     const rows = [];
     for (let i = 0; i < 81; i = i + 9) {
       rows.push(puzzleStrArr.slice(i, i + 9));
@@ -115,9 +117,9 @@ class SudokuSolver {
     return rows;
   }
 
-  _calculateRegions() {
+  _calculateRegions(argArr) {
+    const puzzleStrArr = argArr ? argArr : this.puzzleStrArr;
     // choosing the bottom left cell as the anchor
-    const puzzleStrArr = [...this.puzzleStrArr];
     const regions = [];
 
     // increasing index
@@ -151,16 +153,14 @@ class SudokuSolver {
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
+    // true if valid false if not
     const { error } = this._validateCoordinates(row, column);
     if (error) return { error };
     // validated
+    const puzzleRows = this._calculateRows(puzzleString);
     const rowIndex = ROW_HEADING.indexOf(row);
-    const rowsToBeChecked = this._calculateRows(puzzleString.split(""));
-    const targetRow = rowsToBeChecked[rowIndex];
 
-    return {
-      error: targetRow.indexOf(value) !== -1,
-    };
+    return puzzleRows[rowIndex].indexOf(String(value)) === -1;
   }
 
   checkColumnPlacement(puzzleString, row, column, value) {
@@ -171,9 +171,7 @@ class SudokuSolver {
     const colsToBeChecked = this._calculateColumns(puzzleString.split(""));
     const targetCol = colsToBeChecked[colIndex];
 
-    return {
-      error: targetCol.indexOf(value) !== -1,
-    };
+    return targetCol.indexOf(String(value)) === -1;
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
@@ -183,12 +181,13 @@ class SudokuSolver {
 
     const puzzleStringIndex = this._calculatePuzzleStringIndex(row, column);
 
-    const regionIndex = this._findRegion(puzzleStringIndex);
+    const regionIndex = this._findRegionIndex(puzzleStringIndex);
     const allRegions = this._calculateRegions(puzzleString.split(""));
 
     const targetRegion = allRegions[regionIndex];
+    console.debug("targetRegion: ", targetRegion);
 
-    return { error: targetRegion.indexOf(value) !== -1 };
+    return targetRegion.indexOf(String(value)) === -1;
   }
 
   _setDifference(setA, setB) {

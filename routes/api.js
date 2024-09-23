@@ -13,7 +13,15 @@ module.exports = function (app) {
         error: "Required field(s) missing",
       });
 
-    if (reqBody.coordinate.length !== 2) return { error: "Invalid coordinate" };
+    const result = solver.check(
+      reqBody.puzzle,
+      reqBody.coordinate,
+      reqBody.value,
+    );
+    if (result.error) return res.status(400).send({ error: result.error });
+
+    if (reqBody.coordinate.length !== 2)
+      return res.status(400).send({ error: "Invalid coordinate" });
     // check the coordinate
 
     const { error } = solver._validateCoordinates(
@@ -21,17 +29,11 @@ module.exports = function (app) {
       reqBody.coordinate[1],
     );
 
-    if (error) return { error: "Invalid coordinate" };
+    if (error) return res.status(400).send({ error: "Invalid coordinate" });
 
-    if (!String(reqBody.value).match(/[1-9]{1}/g))
-      return { error: "Invalid value" };
-
-    const result = solver.check(
-      reqBody.puzzle,
-      reqBody.coordinate,
-      reqBody.value,
-    );
-    if (result.error) return res.status(400).send({ error: result.error });
+    if (!String(reqBody.value).match(/[1-9]{1}/g)) {
+      return res.status(400).send({ error: "Invalid value" });
+    }
 
     return res.status(200).send(result.result);
   });
