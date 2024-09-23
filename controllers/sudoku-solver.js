@@ -20,7 +20,42 @@ class SudokuSolver {
     return { error: false }; // no error means success
   }
 
+  isValidPuzzle(puzzleStr) {
+    const argArr = puzzleStr.split("");
+    // check row, columns and regions for repetition
+    const rows = this._calculateRows(argArr);
+    const cols = this._calculateColumns(argArr);
+    const regions = this._calculateRegions(argArr);
+
+    // check for repetition in each row
+    for (const row of rows) {
+      const nums = row.filter((x) => x !== ".");
+      const numSet = new Set(nums);
+      if (nums.length !== numSet.size) {
+        return false;
+      }
+    }
+    for (const col of cols) {
+      const nums = col.filter((x) => x !== ".");
+      const numSet = new Set(nums);
+      if (nums.length !== numSet.size) {
+        return false;
+      }
+    }
+
+    for (const region of regions) {
+      const nums = region.filter((x) => x !== ".");
+      const numSet = new Set(nums);
+
+      if (nums.length !== numSet.size) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   check(puzzle, coordinate, value) {
+    // serves the /api/check endpoint
     const { error } = this.validate(puzzle);
     if (error) return { error };
     // called after validating coordinates
@@ -273,6 +308,9 @@ class SudokuSolver {
     // validation
     const { error } = this.validate(puzzleString);
     if (error) return { error };
+
+    const isValidPuzzle = this.isValidPuzzle(puzzleString);
+    if (!isValidPuzzle) return { error: "Puzzle cannot be solved" };
 
     // setup
 
