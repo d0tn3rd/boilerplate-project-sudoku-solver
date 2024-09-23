@@ -6,12 +6,14 @@ let solver = new Solver();
 
 suite("Unit Tests", () => {
   test("Logic handles a valid puzzle string of 81 characters", (done) => {
-    assert.equal(
-      solver.solve(
-        "..839.7.575.....964..1.......16.29846.9.312.7..754.....62..5.78.8...3.2...492...1",
-      )["error"],
-      false,
+    const result = solver.solve(
+      "..839.7.575.....964..1.......16.29846.9.312.7..754.....62..5.78.8...3.2...492...1",
     );
+    assert.equal(
+      result.solution,
+      "218396745753284196496157832531672984649831257827549613962415378185763429374928561",
+    );
+    done();
   });
 
   test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", (done) => {
@@ -21,6 +23,7 @@ suite("Unit Tests", () => {
       )["error"],
       "Invalid characters in puzzle",
     );
+    done();
   });
 
   test("Logic handles a puzzle string that is not 81 characters in length", (done) => {
@@ -30,6 +33,7 @@ suite("Unit Tests", () => {
       )["error"],
       "Expected puzzle to be 81 characters long",
     );
+    done();
   });
 
   test("Logic handles a valid row placement", (done) => {
@@ -41,6 +45,7 @@ suite("Unit Tests", () => {
         3,
       )["error"],
     );
+    done();
   });
 
   test("Logic handles an invalid row placement", (done) => {
@@ -52,6 +57,7 @@ suite("Unit Tests", () => {
         8,
       )["error"],
     );
+    done();
   });
 
   test("Logic handles a valid column placement", (done) => {
@@ -63,6 +69,7 @@ suite("Unit Tests", () => {
         3,
       )["error"],
     );
+    done();
   });
 
   test("Logic handles an invalid column placement", (done) => {
@@ -74,6 +81,7 @@ suite("Unit Tests", () => {
         9,
       )["error"],
     );
+    done();
   });
 
   test("Logic handles a valid region (3x3 grid) placement", (done) => {
@@ -85,6 +93,7 @@ suite("Unit Tests", () => {
         3,
       )["error"],
     );
+    done();
   });
 
   test("Logic handles an invalid region (3x3 grid) placement", (done) => {
@@ -96,6 +105,7 @@ suite("Unit Tests", () => {
         1,
       )["error"],
     );
+    done();
   });
 
   test("Valid puzzle strings pass the solver", (done) => {
@@ -105,6 +115,7 @@ suite("Unit Tests", () => {
         "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.",
       )["error"],
     );
+    done();
   });
 
   test("Invalid puzzle strings fail the solver", (done) => {
@@ -114,6 +125,7 @@ suite("Unit Tests", () => {
       )["error"],
       "Puzzle cannot be solved",
     );
+    done();
   });
 
   test("Solver returns the expected solution for an incomplete puzzle", (done) => {
@@ -123,5 +135,6 @@ suite("Unit Tests", () => {
       )["solution"],
       "218396745753284196496157832531672984649831257827549613962415378185763429374928561",
     );
+    done();
   });
 });
