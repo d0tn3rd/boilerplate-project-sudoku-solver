@@ -34,7 +34,7 @@ module.exports = function (app) {
 
     if (error) return res.status(400).send({ error: "Invalid coordinate" });
 
-    if (!String(reqBody.value).match(/[1-9]{1}/g)) {
+    if (!String(reqBody.value).match(/^[1-9]$/)) {
       return res.status(400).send({ error: "Invalid value" });
     }
 
