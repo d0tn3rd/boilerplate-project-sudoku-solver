@@ -43,7 +43,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         3,
-      ),
+      ).valid,
     );
     done();
   });
@@ -55,7 +55,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         8,
-      ),
+      ).valid,
     );
     done();
   });
@@ -67,7 +67,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         3,
-      ),
+      ).valid,
     );
     done();
   });
@@ -79,7 +79,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         9,
-      ),
+      ).valid,
     );
     done();
   });
@@ -91,7 +91,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         3,
-      ),
+      ).valid,
     );
     done();
   });
@@ -103,7 +103,7 @@ suite("Unit Tests", () => {
         "A",
         2,
         1,
-      ),
+      ).valid,
     );
     done();
   });

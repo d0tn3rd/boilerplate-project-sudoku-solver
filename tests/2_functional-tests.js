@@ -158,8 +158,8 @@ suite("Functional Tests", () => {
         .end((err, res) => {
           assert.equal(res.status, 200);
           assert.isObject(res.body);
-          assert.property(res.body, "valid");
           assert.isFalse(res.body.valid);
+          assert.property(res.body, "conflict");
           done();
         });
     });
@@ -177,6 +177,8 @@ suite("Functional Tests", () => {
         .end((err, res) => {
           assert.equal(res.status, 200);
           assert.isObject(res.body);
+          assert.property(res.body, "conflict");
+          assert.isFalse(res.body.valid);
           done();
         });
     });
@@ -194,7 +196,6 @@ suite("Functional Tests", () => {
         .end((err, res) => {
           assert.equal(res.status, 200);
           assert.isObject(res.body);
-          assert.property(res.body, "valid");
           assert.isFalse(res.body.valid);
           done();
         });

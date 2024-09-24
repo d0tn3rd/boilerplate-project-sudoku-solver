@@ -18,6 +18,9 @@ module.exports = function (app) {
       reqBody.coordinate,
       reqBody.value,
     );
+
+    console.log("checkResult", result);
+
     if (result.error) return res.status(400).send({ error: result.error });
 
     if (reqBody.coordinate.length !== 2)
@@ -35,7 +38,9 @@ module.exports = function (app) {
       return res.status(400).send({ error: "Invalid value" });
     }
 
-    return res.status(200).send(result.result);
+    return res
+      .status(200)
+      .send({ valid: Boolean(result.valid), conflict: result.conflict });
   });
 
   app.route("/api/solve").post((req, res) => {

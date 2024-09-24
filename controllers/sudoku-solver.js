@@ -1,10 +1,5 @@
 const ROW_HEADING = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
-const debug = process.env.DEBUG || false;
-if (!debug) {
-  console.debug = () => {};
-}
-
 class SudokuSolver {
   validate(puzzleString) {
     const puzzleRegex = /[^1-9\.]/gm;
@@ -64,43 +59,44 @@ class SudokuSolver {
 
     const rowIndex = ROW_HEADING.indexOf(row);
 
-    const puzzleStrIndex = 9 * rowIndex + col - 1;
+    const puzzleStrIndex = 9 * rowIndex + (col - 1);
+    console.debug("puzzleStrIndex", puzzleStrIndex);
 
+    console.debug("currently at puzzle", puzzle[puzzleStrIndex]);
     if (puzzle[puzzleStrIndex] !== ".") {
+      console.warn("place queried is not empty");
       return {
         error: false,
-        result: {
-          valid: puzzle[puzzleStrIndex] === String(value),
-        },
+        valid: puzzle[puzzleStrIndex] === String(value),
       };
     }
 
-    const { error: rowError } = this.checkRowPlacement(puzzle, row, col, value);
+    const { valid: rowValid } = this.checkRowPlacement(puzzle, row, col, value);
 
-    const { error: colError } = this.checkColumnPlacement(
+    const { valid: columnValid } = this.checkColumnPlacement(
       puzzle,
       row,
       col,
       value,
     );
-    const { error: regionError } = this.checkRegionPlacement(
+    const { valid: regionValid } = this.checkRegionPlacement(
       puzzle,
       row,
       col,
       value,
     );
 
-    if (!regionError && !rowError && !colError) {
-      return { error: false, result: { valid: true } };
+    if (columnValid && rowValid && regionValid) {
+      return { error: false, valid: true };
     }
 
-    const resErrorArr = [];
-    if (regionError) resErrorArr.push("region");
-    if (colError) resErrorArr.push("column");
-    if (rowError) resErrorArr.push("row");
+    const conflicts = [];
+    if (!rowValid) conflicts.push("row");
+    if (!columnValid) conflicts.push("column");
+    if (!regionValid) conflicts.push("region");
+    console.debug("conflicts", conflicts);
 
-    const result = { valid: false, conflict: resErrorArr };
-    return { error: true, result };
+    return { error: false, valid: false, conflict: conflicts };
   }
 
   _validateCoordinates(row, col) {
@@ -123,7 +119,7 @@ class SudokuSolver {
   _calculatePuzzleStringIndex(row, col) {
     // return the puzzlestring index for the coordinate
     const rowIndex = ROW_HEADING.indexOf(row);
-    return rowIndex * 9 + col - 1;
+    return rowIndex * 9 + (col - 1);
   }
 
   _calculateColumns(argArr) {
@@ -190,29 +186,32 @@ class SudokuSolver {
   checkRowPlacement(puzzleString, row, column, value) {
     // true if valid false if not
     const { error } = this._validateCoordinates(row, column);
-    if (error) return { error };
+    if (error) return { error, valid: false };
     // validated
     const puzzleRows = this._calculateRows(puzzleString);
     const rowIndex = ROW_HEADING.indexOf(row);
 
-    return puzzleRows[rowIndex].indexOf(String(value)) === -1;
+    return {
+      error: false,
+      valid: puzzleRows[rowIndex].indexOf(String(value)) === -1,
+    };
   }
 
   checkColumnPlacement(puzzleString, row, column, value) {
     const { error } = this._validateCoordinates(row, column);
-    if (error) return { error };
+    if (error) return { error, valid: false };
 
     const colIndex = column - 1;
     const colsToBeChecked = this._calculateColumns(puzzleString.split(""));
     const targetCol = colsToBeChecked[colIndex];
 
-    return targetCol.indexOf(String(value)) === -1;
+    return { error: false, valid: targetCol.indexOf(String(value)) === -1 };
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
     const { error } = this._validateCoordinates(row, column);
 
-    if (error) return { error };
+    if (error) return { error, valid: false };
 
     const puzzleStringIndex = this._calculatePuzzleStringIndex(row, column);
 
@@ -220,9 +219,8 @@ class SudokuSolver {
     const allRegions = this._calculateRegions(puzzleString.split(""));
 
     const targetRegion = allRegions[regionIndex];
-    console.debug("targetRegion: ", targetRegion);
 
-    return targetRegion.indexOf(String(value)) === -1;
+    return { error: false, valid: targetRegion.indexOf(String(value)) === -1 };
   }
 
   _setDifference(setA, setB) {
